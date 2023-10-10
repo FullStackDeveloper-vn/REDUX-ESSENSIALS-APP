@@ -1,14 +1,7 @@
 import { initializeApp } from "firebase/app";
 // import { getFirestore } from "firebase/firestore";
-import { getFirestore, query, where, collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { getFirestore, serverTimestamp, Timestamp, updateDoc, addDoc, query, where, collection, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
 
-
-// import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
     apiKey: "AIzaSyAX4OS_w7P2eqOtWdqEimTLJPqC6PAAP4E",
     authDomain: "reduxx-15bf1.firebaseapp.com",
@@ -18,28 +11,38 @@ const firebaseConfig = {
     appId: "1:616837811376:web:69cd14784c3b1fcced7f75",
     measurementId: "G-FT8GFJ1Y84"
 };
-
-
 const app = initializeApp(firebaseConfig)
 const db = getFirestore(app)
 
-// const docRef = doc(db, "cities", "SF");
-// (async () => {
-//     const docSnap = await getDoc(docRef);
-//     if (docSnap.exists()) {
-//         console.log("Document data:", docSnap.data());
-//     } else {
-//         // docSnap.data() will be undefined in this case
-//         console.log("No such document!");
-//     }
-// })()
+const docData = {
+    stringExample: "Hello world!",
+    booleanExample: true,
+    numberExample: 3.14159265,
+    dateExample: Timestamp.fromDate(new Date("December 10, 1815")),
+    arrayExample: [5, true, "hello"],
+    nullExample: null,
+    objectExample: {
+        a: 5,
+        b: {
+            nested: "foo"
+        }
+    }
+};
 
-const q = query(collection(db, "cities"), where("capital", "==", true));
 
-(async () => {
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
+async function xxx() {
+    const frankDocRef = doc(db, "users", "frank");
+    await setDoc(frankDocRef, {
+        name: "Frank",
+        favorites: { food: "Pizza", color: "Blue", subject: "recess" },
+        age: 12
     });
-})()
+    await updateDoc(frankDocRef, {
+        "age": 133,
+        "favorites.color": "Red"
+    });
+};
+
+xxx()
+
+
