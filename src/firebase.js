@@ -34,7 +34,7 @@ const db = getFirestore(app)
 //     }
 // })()
 
-const q = query(collection(db, "cities"));
+const q = query(collection(db, "cities"), where("capital", "==", true));
 
 (async () => {
     const querySnapshot = await getDocs(q);
