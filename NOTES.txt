@@ -1,0 +1,51 @@
+https://xstate.js.org/docs/
+Gist
+
+STORE SETUP
+In addition, configureStore adds some middleware by default, each with a specific goal:
+
+You can also pass an object full of "slice reducers", and configureStore will call combineReducers for you:
+
+WRITING REDUCERS
+...the "lookup table" approach...
+Action Creator : 
+    const addTodo = createAction('ADD_TODO')
+    addTodo({ text: 'Buy milk' }) 
+
+In modern JavaScript, there are several legal ways to define both keys and functions in an object
+
+WRITING ACTION CREATORS
+
+CREATING SLICES OF STATE
+
+const { createPost } = postsSlice.actions
+
+console.log(createPost({ id: 123, title: 'Hello World' }))
+// {type : "posts/createPost", payload : {id : 123, title : "Hello World"}}
+
+First, Redux action types are not meant to be exclusive to a single slice. Conceptually, each slice reducer "owns" its own piece of the Redux state, but it should be able to listen to any action type and update its state appropriately. For example, many different slices might want to respond to a "user logged out" action by clearing data or resetting back to initial state values. Keep that in mind as you design your state shape and create your slices.
+
+Second, JS modules can have "circular reference" problems if two modules try to import each other. This can result in imports being undefined, which will likely break the code that needs that import. Specifically in the case of "ducks" or slices, this can occur if slices defined in two different files both want to respond to actions defined in the other file.
+
+https://codesandbox.io/s/rw7ppj4z0m?from-embed
+************************************
+
+ASYNCHRONOUS LOGIC AND DATA FETCHING ( ~ ~ AJAX ) 
+
+export const { usersLoading, usersReceived } = usersSlice.actions
+
+// Define a thunk that dispatches those action creators
+const fetchUsers = () => async (dispatch) => {
+  dispatch(usersLoading())
+  const response = await usersAPI.fetchAll()
+  dispatch(usersReceived(response.data))
+}
+
+Redux Data Fetching Patterns (~~AJAX)
+
+MANAGING NORMAILIZED DATA
+
+normalizr
+createEntityAdapter 
+
+WORKING WITH NON-SERIALIZABLE DATA
