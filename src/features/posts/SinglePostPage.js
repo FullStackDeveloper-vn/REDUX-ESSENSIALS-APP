@@ -14,7 +14,6 @@ export const SinglePostPage = ({ match }) => {
     // )
     // const post = useSelector(state => selectPostById(state, postId))
     const { data: post, isFetching, isSuccess } = useGetPostQuery(postId)
-    console.log(post)
     let content
     if (isFetching) {
         content = <Spinner text="Loading..." />
