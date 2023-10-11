@@ -1,49 +1,37 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { addNewPost, postAdded } from "./postsSlice";
-import { selectAllUsers } from '../users/usersSlice'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 
+import { Spinner } from '../../components/Spinner'
+import { useAddNewPostMutation } from '../api/apiSlice'
+import { selectAllUsers } from '../users/usersSlice'
 
 export const AddPostForm = () => {
     const [title, setTitle] = useState('')
     const [content, setContent] = useState('')
     const [userId, setUserId] = useState('')
 
-    const dispatch = useDispatch()
-    // const users = useSelector(state => state.users)
+    const [addNewPost, { isLoading }] = useAddNewPostMutation()
     const users = useSelector(selectAllUsers)
 
-
-    const ontitleChange = e => setTitle(e.target.value)
-    const onContentChange = e => setContent(e.target.value)
+    const onTitleChanged = e => setTitle(e.target.value)
+    const onContentChanged = e => setContent(e.target.value)
     const onAuthorChanged = e => setUserId(e.target.value)
-    const [addRequestStatus, setAddRequestStatus] = useState('idle')
 
+    const canSave = [title, content, userId].every(Boolean) && !isLoading
 
-
-    // const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
-
-    const canSave = [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
     const onSavePostClicked = async () => {
         if (canSave) {
             try {
-                setAddRequestStatus('pending')
-                await dispatch(addNewPost({ title, content, user: userId })).unwrap()
+                await addNewPost({ title, content, user: userId }).unwrap()
                 setTitle('')
                 setContent('')
                 setUserId('')
             } catch (err) {
                 console.error('Failed to save the post: ', err)
-            } finally {
-                setAddRequestStatus('idle')
             }
         }
-        // if (title && content) {
-        //     dispatch(postAdded(title, content, userId))
-        //     setTitle('')
-        //     setContent('')
-        // }
     }
+
     const usersOptions = users.map(user => (
         <option key={user.id} value={user.id} >
             {user.name}
@@ -60,7 +48,7 @@ export const AddPostForm = () => {
                     id="postTitle"
                     name="postTitle"
                     value={title}
-                    onChange={ontitleChange}
+                    onChange={onTitleChanged}
                 />
                 <label htmlFor="postAuthor" > Author </label>
                 <select id="postAuthor" value={userId} onChange={onAuthorChanged} >
@@ -72,7 +60,7 @@ export const AddPostForm = () => {
                     id="postContent"
                     name="postContent"
                     value={content}
-                    onChange={onContentChange}
+                    onChange={onContentChanged}
                 />
                 <button type="button" onClick={onSavePostClicked} disabled={!canSave} > Save Post </button>
             </form>
