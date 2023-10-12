@@ -1,24 +1,35 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
-import { fetchNotifications, selectAllNotifications } from '../features/notifications/notificationsSlice'
+
+import {
+  fetchNotificationsWebsocket,
+  selectNotificationsMetadata,
+  useGetNotificationsQuery,
+} from '../features/notifications/notificationsSlice'
 
 export const Navbar = () => {
-
   const dispatch = useDispatch()
-  const notification = useSelector(selectAllNotifications)
-  const numUnreadNotifications = notification.filter(n => !n.read).length
+
+  // Trigger initial fetch of notifications and keep the websocket open to receive updates
+  useGetNotificationsQuery()
+
+  const notificationsMetadata = useSelector(selectNotificationsMetadata)
+  const numUnreadNotifications = notificationsMetadata.filter((n) => !n.read)
+    .length
 
   const fetchNewNotifications = () => {
-    dispatch(fetchNotifications())
+    dispatch(fetchNotificationsWebsocket())
   }
 
   let unreadNotificationsBadge
+
   if (numUnreadNotifications > 0) {
     unreadNotificationsBadge = (
-      <span className='badge' >{numUnreadNotifications} </span>
+      <span className="badge">{numUnreadNotifications}</span>
     )
   }
+
   return (
     <nav>
       <section>
@@ -26,14 +37,13 @@ export const Navbar = () => {
 
         <div className="navContent">
           <div className="navLinks">
-            <Link to="/" > Posts All </Link>
+            <Link to="/">Posts</Link>
             <Link to="/users">Users</Link>
-            {/* <Link to="/notifications">Notifications</Link> */}
             <Link to="/notifications">
-              Notifications {unreadNotificationsBadge} {notification.length}
+              Notifications {unreadNotificationsBadge}
             </Link>
-            <Link to="/posts/2" > Posts x </Link>
           </div>
+
           <button className="button" onClick={fetchNewNotifications}>
             Refresh Notifications
           </button>
